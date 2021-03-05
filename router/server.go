@@ -13,8 +13,12 @@ import (
 func NewServer(root *Root) *Server {
 	//文件浏览
 	r := mux.NewRouter()
-	r.PathPrefix(root.Path).HandlerFunc(IndexHandler(root.Index))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir(root.FileDir)))
+	if root.Path == "/" {
+		r.PathPrefix("/").Handler(http.FileServer(http.Dir(root.FileDir)))
+	} else {
+		r.PathPrefix(root.Path).HandlerFunc(IndexHandler(root.Index))
+		r.PathPrefix("/").Handler(http.FileServer(http.Dir(root.FileDir)))
+	}
 	srv := &http.Server{
 		Handler: handlers.LoggingHandler(os.Stdout, r),
 		Addr:    fmt.Sprintf(":%d", root.Port),
