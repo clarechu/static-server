@@ -44,6 +44,8 @@
 
 .idea
 
+pkg
+
 # Kernel Module Compile Results
 *.mod*
 *.cmd
