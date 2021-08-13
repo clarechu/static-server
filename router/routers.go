@@ -36,5 +36,5 @@ func addFlag(cmd *cobra.Command, args *Root) {
 	cmd.PersistentFlags().Int32VarP(&args.Port, "port", "p", 8080, "static file server ports")
 	cmd.PersistentFlags().StringVarP(&args.Path, "path", "P", "/", "url root path")
 	cmd.PersistentFlags().StringVarP(&args.FileDir, "file", "f", "./dist", "static file path")
-	cmd.PersistentFlags().StringVarP(&args.Index, "index", "i", "./dist/index.html", "static file path index.html")
+	cmd.PersistentFlags().StringVarP(&args.Index, "index", "i", "index.html", "static file path index.html")
 }
