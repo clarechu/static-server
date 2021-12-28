@@ -6,10 +6,10 @@ import (
 )
 
 type Root struct {
-	Port    int32  `json:"port"`
-	FileDir string `json:"file_dir"`
-	Path    string `json:"path"`
-	Index   string `json:"index"`
+	Port       int32
+	FileDir    string
+	Path       string
+	PublicPath string
 }
 
 type Server struct {
@@ -33,8 +33,8 @@ func GetRootCmd(args []string) *cobra.Command {
 }
 
 func addFlag(cmd *cobra.Command, args *Root) {
-	cmd.PersistentFlags().Int32VarP(&args.Port, "port", "p", 8080, "static file server ports")
-	cmd.PersistentFlags().StringVarP(&args.Path, "path", "P", "/", "url root path")
+	cmd.PersistentFlags().Int32Var(&args.Port, "port", 8080, "static file server ports")
+	cmd.PersistentFlags().StringVarP(&args.Path, "basicPath", "p", "/", "url root path")
 	cmd.PersistentFlags().StringVarP(&args.FileDir, "file", "f", "./dist", "static file path")
-	cmd.PersistentFlags().StringVarP(&args.Index, "index", "i", "index.html", "static file path index.html")
+	cmd.PersistentFlags().StringVar(&args.PublicPath, "publicPath", "/", "The base URL your application bundle will be deployed")
 }

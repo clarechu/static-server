@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -23,7 +24,7 @@ func NewServer(root *Root) *Server {
 			r.PathPrefix(root.Path).HandlerFunc(IndexHandler(root.Index))
 			r.PathPrefix("/").Handler(http.FileServer(http.Dir(root.FileDir)))
 		}*/
-	spa := spaHandler{staticPath: root.FileDir, indexPath: root.Index, rootPath: root.Path}
+	spa := spaHandler{staticPath: root.FileDir, indexPath: path.Join(root.FileDir + "/index.html"), rootPath: root.Path}
 	r.PathPrefix(root.Path).Handler(spa)
 	srv := &http.Server{
 		Handler: handlers.LoggingHandler(os.Stdout, r),
