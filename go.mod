@@ -1,4 +1,4 @@
-module github.com/ClareChu/static-server
+module github.com/clarechu/static-server
 
 go 1.15
 
