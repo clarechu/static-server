@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"io/ioutil"
 	log "k8s.io/klog/v2"
 	"net/http"
 	"os"
@@ -33,13 +32,13 @@ func NewServer(root *Root) *Server {
 	staticAssetsHandler, err := NewStaticAssetsHandler("", StaticAssetsHandlerOptions{
 		FileDir:  root.FileDir,
 		BasePath: root.PublicPath,
+		IsGzip:   root.IsGzip,
 	})
 	if err != nil {
 		log.Warningf("new static assets handler :%v", err)
 	} else {
 		staticAssetsHandler.RegisterRoutes(r)
 	}
-	r.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
 	addHTTPMiddleware(r)
 	srv := &http.Server{
 		Handler: handlers.LoggingHandler(os.Stdout, r),
@@ -55,23 +54,15 @@ func NewServer(root *Root) *Server {
 
 func addHTTPMiddleware(router *mux.Router) {
 	router.Use(CORSMethodMiddleware(router))
-	router.Use(LogMiddleware(router))
+	//router.Use(LogMiddleware(router))
 }
 
 func (s *Server) Run() {
-	log.V(1).Info("Starting up http-server, serving ./dist")
-	log.V(1).Info("Available on:")
-	log.V(1).Infof("   http://127.0.0.1%s", s.sv.Addr)
-	log.V(1).Infof("Hit CTRL-C to stop the server")
+	log.V(0).Info("Starting up http-server, serving ./dist")
+	log.V(0).Info("Available on:")
+	log.V(0).Infof("   http://127.0.0.1%s", s.sv.Addr)
+	log.V(0).Infof("Hit CTRL-C to stop the server")
 	log.Fatal(s.sv.ListenAndServe())
-}
-
-func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	s, err := ioutil.ReadFile("")
-	if err != nil {
-		return
-	}
-	w.Write(s)
 }
 
 // spaHandler implements the http.Handler interface, so we can use it

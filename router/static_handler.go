@@ -49,8 +49,6 @@ var (
 	// The following patterns are searched and replaced in the index.html as a way of customizing the UI.
 	basePathPattern = regexp.MustCompile(`<base href="/"`) // Note: tag is not closed
 
-	LinkPattern   = regexp.MustCompile(`<link href="`)   // Note: tag is not closed
-	ScriptPattern = regexp.MustCompile(`<script href="`) // Note: tag is not closed
 )
 
 // RegisterStaticHandler adds handler for static assets to the router.
@@ -78,6 +76,7 @@ type StaticAssetsHandlerOptions struct {
 	// FileDir static file dir (/opt/solar-mesh/dist)
 	FileDir  string
 	BasePath string
+	IsGzip   bool
 }
 
 // NewStaticAssetsHandler returns a StaticAssetsHandler
@@ -142,21 +141,24 @@ func loadIndexHTML(open func(string) (http.File, error)) ([]byte, error) {
 
 // RegisterRoutes registers routes for this handler on the given router
 func (sH *StaticAssetsHandler) RegisterRoutes(router *mux.Router) {
+	router.NotFoundHandler = http.HandlerFunc(sH.notFoundHandler)
 	router = router.PathPrefix(sH.options.BasePath).Subrouter()
 	fileServer := http.FileServer(sH.assetsFS)
 	if sH.options.BasePath != "/" {
 		fileServer = http.StripPrefix(sH.options.BasePath+"/", fileServer)
 	}
-
-	fileServer = gziphandler.GzipHandler(fileServer)
-	router.PathPrefix("/static/").Handler(fileServer)
+	if sH.options.IsGzip {
+		fileServer = gziphandler.GzipHandler(fileServer)
+	}
+	// 这个地方会导致 notFoundHandler 失效
+	router.PathPrefix("/static").Handler(fileServer)
+	// 处理根路径下面的 favicon.ico 文件
 	for _, file := range staticRootFiles {
 		router.Path("/" + file).Handler(fileServer)
 	}
-	router.NotFoundHandler = http.HandlerFunc(sH.notFound)
 }
 
-func (sH *StaticAssetsHandler) notFound(w http.ResponseWriter, r *http.Request) {
+func (sH *StaticAssetsHandler) notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write(sH.indexHTML.Load().([]byte))
 }
