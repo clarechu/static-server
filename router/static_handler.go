@@ -34,11 +34,10 @@ type QueryOptions struct {
 	FileDir string
 	// BasePath is the prefix for all UI and API HTTP routes
 	BasePath string
-	// StaticAssets is the path for the static assets for the UI (https://github.com/uber/jaeger-ui)
+	// StaticAssets is the path for the static assets for the UI
 	StaticAssets string
 	// AdditionalHeaders
-	AdditionalHeaders http.Header
-	// MaxClockSkewAdjust is the maximum duration by which jaeger-query will adjust a span
+	AdditionalHeaders  http.Header
 	MaxClockSkewAdjust time.Duration
 }
 
@@ -118,7 +117,7 @@ func loadAndEnrichIndexHTML(open func(string) (http.File, error), options Static
 	}
 	if options.BasePath != "/" {
 		if !strings.HasPrefix(options.BasePath, "/") || strings.HasSuffix(options.BasePath, "/") {
-			return nil, fmt.Errorf("invalid base path '%s'. Must start but not end with a slash '/', e.g. '/jaeger/ui'", options.BasePath)
+			return nil, fmt.Errorf("invalid base path '%s'. Must start but not end with a slash '/', e.g. '/clarechu/ui'", options.BasePath)
 		}
 		indexBytes = basePathPattern.ReplaceAll(indexBytes, []byte(fmt.Sprintf(`<base href="%s/"`, options.BasePath)))
 	}

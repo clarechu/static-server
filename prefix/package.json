@@ -1,0 +1,22 @@
+{
+  "name": "prefix-uri",
+  "version": "1.0.0",
+  "description": "给所有的访问路径静态资源添加路径",
+  "main": "prefix-url.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clarechu/static-server.git"
+  },
+  "keywords": [
+    "prefix"
+  ],
+  "author": "clarechu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clarechu/static-server/issues"
+  },
+  "homepage": "https://github.com/clarechu/static-server#readme"
+}

@@ -45,6 +45,9 @@ Example:
 # http-server dist .
 http-server dist
 
+# http-server set publicPath .
+http-server ./dist --publicPath /a
+
 # set port .
 http-server dist --port 8080
 
