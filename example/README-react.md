@@ -51,7 +51,7 @@ import prefixUrl from 'prefix-uri/prefix-url'
  import prefixUrl from 'prefix-uri/prefix-url'
 
      health() {
-      var baseUrl = window.location.origin + prefixUrl('/health')
+      var baseUrl = window.location.origin + prefixUrl('/')
       this.baseUrl = baseUrl
       console.log("baseUrl: ", baseUrl)
       this.axios.get(baseUrl).then((response) => {

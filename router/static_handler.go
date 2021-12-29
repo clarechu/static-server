@@ -46,8 +46,8 @@ var (
 	staticRootFiles = []string{favoriteIcon}
 
 	// The following patterns are searched and replaced in the index.html as a way of customizing the UI.
-	basePathPattern = regexp.MustCompile(`<base href="/"`) // Note: tag is not closed
-
+	basePathPattern     = regexp.MustCompile(`<base href="/"`) // Note: tag is not closed
+	baseRootPathPattern = regexp.MustCompile(`<base href=/`)   // Note: tag is not closed
 )
 
 // RegisterStaticHandler adds handler for static assets to the router.
@@ -119,7 +119,13 @@ func loadAndEnrichIndexHTML(open func(string) (http.File, error), options Static
 		if !strings.HasPrefix(options.BasePath, "/") || strings.HasSuffix(options.BasePath, "/") {
 			return nil, fmt.Errorf("invalid base path '%s'. Must start but not end with a slash '/', e.g. '/clarechu/ui'", options.BasePath)
 		}
-		indexBytes = basePathPattern.ReplaceAll(indexBytes, []byte(fmt.Sprintf(`<base href="%s/"`, options.BasePath)))
+		if basePathPattern.Match(indexBytes) {
+			indexBytes = basePathPattern.ReplaceAll(indexBytes, []byte(fmt.Sprintf(`<base href="%s/"`, options.BasePath)))
+		} else if baseRootPathPattern.Match(indexBytes) {
+			indexBytes = baseRootPathPattern.ReplaceAll(indexBytes, []byte(fmt.Sprintf(`<base href="%s/"`, options.BasePath)))
+		} else {
+			log.Warningf("index.html not found  <base href=\"/\"> ")
+		}
 	}
 
 	return indexBytes, nil

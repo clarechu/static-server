@@ -22,7 +22,7 @@ mv http-server pkg/amd-x86_64
 
 # === windows
 
-GOOS=windows go build -o http-server.exe
+CGO_ENABLED="0" GOOS=windows GOARCH="amd64" go build -o http-server.exe
 
 mv http-server.exe pkg/win-x86_64
 
