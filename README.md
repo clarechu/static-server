@@ -1,6 +1,6 @@
 # static-server
 
-静态资源下载 动态代理
+### 静态资源动态代理
 
 主要目的解决静态资源在变更basic路径的时需要重新编译,
 这样使得上线发版的效率很低,  还需要测试。
@@ -78,6 +78,9 @@ $ tar -xvf http-server-v0.3-macos-darwin.tar.gz
 ```bash
 docker run -it -p 8080:8080 -v dist:/dist clarechu/http-server:v0.1.0 -f /dist --publicPath /a   
 ```
+### 2. 前端更改代码
+
+[README](./example/README.md)
 
 ### 参数说明
 
