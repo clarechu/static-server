@@ -24,6 +24,7 @@ type Root struct {
 	FileDir    string
 	Path       string
 	PublicPath string
+	IsGzip     bool
 }
 
 type Server struct {
@@ -36,7 +37,27 @@ func GetRootCmd(args []string) *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "http-server",
 		Short: "http-server ...",
-		Long:  `http-server 加载静态资源.`,
+		Long: `
+
+Tips  Find more information at: https://github.com/clarechu/static-server
+
+Usage:
+	http-server [path] [options]
+
+
+Example:
+# http-server dist .
+http-server dist
+
+# set port .
+http-server dist --port 8080
+
+# 开启页面gzip
+http-server dist --port 8080 --gzip true
+
+
+
+`,
 		Run: func(cmd *cobra.Command, args []string) {
 			server := NewServer(ag)
 			server.Run()
@@ -48,6 +69,7 @@ func GetRootCmd(args []string) *cobra.Command {
 
 func addFlag(cmd *cobra.Command, args *Root) {
 	cmd.PersistentFlags().Int32Var(&args.Port, "port", 8080, "static file server ports")
+	cmd.PersistentFlags().BoolVar(&args.IsGzip, "gzip", false, "gzip")
 	cmd.PersistentFlags().StringVarP(&args.Path, "basicPath", "p", "/", "url root path")
 	cmd.PersistentFlags().StringVarP(&args.FileDir, "file", "f", "./dist", "static file path")
 	cmd.PersistentFlags().StringVar(&args.PublicPath, "publicPath", "/", "The base URL your application bundle will be deployed")
