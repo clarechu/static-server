@@ -46,3 +46,14 @@ export default function prefixUrl(value) {
   const s = value == null ? '' : String(value);
   return `${pathPrefix}${s}`;
 }
+
+
+export default function basicUrl(value) {
+  const origin = window.location.origin
+  return  origin + prefixUrl(value)
+}
+
+export default function basicUrl() {
+  const origin = window.location.origin
+  return  origin + prefixUrl("/")
+}

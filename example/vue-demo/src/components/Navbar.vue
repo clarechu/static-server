@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import prefixUrl from '../utils/prefix-url'
+import prefixUrl from 'prefix-uri/prefix-url'
 
 export default {
   name: "app",

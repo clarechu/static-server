@@ -6292,6 +6292,11 @@ postcss@^8.1.10:
     picocolors "^1.0.0"
     source-map-js "^1.0.1"
 
+prefix-uri@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/prefix-uri/download/prefix-uri-1.0.0.tgz#0d451e4f5a05ce961bc0b7772ad017d752997f64"
+  integrity sha512-v24EP+omi6MwsHIiyf19/S5vzi8hrr4qliy1djZI6gBwi2F5iGeKhUkSGJuhGe5yxmx08JBpacIDRSfnouj1iw==
+
 prepend-http@^1.0.0:
   version "1.0.4"
   resolved "https://registry.nlark.com/prepend-http/download/prepend-http-1.0.4.tgz#d4f4562b0ce3696e41ac52d0e002e57a635dc6dc"
