@@ -15,15 +15,11 @@
 package router
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/NYTimes/gziphandler"
 	"io"
 	log "k8s.io/klog/v2"
 	"net/http"
-	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"sync/atomic"
@@ -53,8 +49,8 @@ var (
 	// The following patterns are searched and replaced in the index.html as a way of customizing the UI.
 	basePathPattern = regexp.MustCompile(`<base href="/"`) // Note: tag is not closed
 
-	LinkPattern   = regexp.MustCompile(`<link href="/"`)   // Note: tag is not closed
-	ScriptPattern = regexp.MustCompile(`<script href="/"`) // Note: tag is not closed
+	LinkPattern   = regexp.MustCompile(`<link href="`)   // Note: tag is not closed
+	ScriptPattern = regexp.MustCompile(`<script href="`) // Note: tag is not closed
 )
 
 // RegisterStaticHandler adds handler for static assets to the router.
@@ -80,14 +76,8 @@ type StaticAssetsHandler struct {
 // StaticAssetsHandlerOptions defines options for NewStaticAssetsHandler
 type StaticAssetsHandlerOptions struct {
 	// FileDir static file dir (/opt/solar-mesh/dist)
-	FileDir      string
-	BasePath     string
-	UIConfigPath string
-}
-
-type loadedConfig struct {
-	regexp *regexp.Regexp
-	config []byte
+	FileDir  string
+	BasePath string
 }
 
 // NewStaticAssetsHandler returns a StaticAssetsHandler
@@ -148,46 +138,6 @@ func loadIndexHTML(open func(string) (http.File, error)) ([]byte, error) {
 		return nil, fmt.Errorf("cannot read from index.html: %w", err)
 	}
 	return indexBytes, nil
-}
-
-func loadUIConfig(uiConfig string) (*loadedConfig, error) {
-	if uiConfig == "" {
-		return nil, nil
-	}
-	bytesConfig, err := os.ReadFile(filepath.Clean(uiConfig))
-	if err != nil {
-		return nil, fmt.Errorf("cannot read UI config file %v: %w", uiConfig, err)
-	}
-	var r []byte
-
-	ext := filepath.Ext(uiConfig)
-	switch strings.ToLower(ext) {
-	case ".json":
-		var c map[string]interface{}
-
-		if err := json.Unmarshal(bytesConfig, &c); err != nil {
-			return nil, fmt.Errorf("cannot parse UI config file %v: %w", uiConfig, err)
-		}
-		r, _ = json.Marshal(c)
-
-		return &loadedConfig{
-			// regexp: configPattern,
-			config: append([]byte("JAEGER_CONFIG = "), append(r, byte(';'))...),
-		}, nil
-	case ".js":
-		r = bytes.TrimSpace(bytesConfig)
-		re := regexp.MustCompile(`function\s+UIConfig(\s)?\(\s?\)(\s)?{`)
-		if !re.Match(r) {
-			return nil, fmt.Errorf("UI config file must define function UIConfig(): %v", uiConfig)
-		}
-
-		return &loadedConfig{
-			// regexp: configJsPattern,
-			config: r,
-		}, nil
-	default:
-		return nil, fmt.Errorf("unrecognized UI config file format, expecting .js or .json file: %v", uiConfig)
-	}
 }
 
 // RegisterRoutes registers routes for this handler on the given router

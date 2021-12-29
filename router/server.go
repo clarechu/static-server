@@ -19,7 +19,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"io/ioutil"
-	"log"
+	log "k8s.io/klog/v2"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,6 +30,15 @@ import (
 func NewServer(root *Root) *Server {
 	//文件浏览
 	r := mux.NewRouter()
+	staticAssetsHandler, err := NewStaticAssetsHandler("", StaticAssetsHandlerOptions{
+		FileDir:  root.FileDir,
+		BasePath: root.PublicPath,
+	})
+	if err != nil {
+		log.Warningf("new static assets handler :%v", err)
+	} else {
+		staticAssetsHandler.RegisterRoutes(r)
+	}
 	r.NotFoundHandler = http.HandlerFunc(NotFoundHandler)
 	addHTTPMiddleware(r)
 	srv := &http.Server{
@@ -50,10 +59,10 @@ func addHTTPMiddleware(router *mux.Router) {
 }
 
 func (s *Server) Run() {
-	log.Printf("Starting up http-server, serving ./dist")
-	log.Printf("Available on:")
-	log.Printf("   http://127.0.0.1%s", s.sv.Addr)
-	log.Printf("Hit CTRL-C to stop the server")
+	log.V(1).Info("Starting up http-server, serving ./dist")
+	log.V(1).Info("Available on:")
+	log.V(1).Infof("   http://127.0.0.1%s", s.sv.Addr)
+	log.V(1).Infof("Hit CTRL-C to stop the server")
 	log.Fatal(s.sv.ListenAndServe())
 }
 

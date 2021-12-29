@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package router
 
 import (
-	"github.com/clarechu/static-server/router"
-	"k8s.io/klog/v2"
-	"os"
+	"fmt"
+	"github.com/spf13/cobra"
 )
 
-func init() {
-	klog.InitFlags(nil)
-	//pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
-}
-
-func main() {
-	rootCmd := router.GetRootCmd(os.Args[1:])
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(-1)
+func VersionCommand() *cobra.Command {
+	versionCmd := &cobra.Command{
+		Use:   "version",
+		Short: "Print version info",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Printf("Version: 0.0.1")
+			fmt.Printf("GoOs: darwin")
+			fmt.Printf("GoArch: amd64")
+		},
 	}
+	return versionCmd
 }
