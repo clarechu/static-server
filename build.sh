@@ -29,6 +29,6 @@ mv http-server.exe pkg/win-x86_64
 
 cd pkg
 
-tar -cvf http-server-v0.3-linux-amd-x86_64.tar.gz amd-x86_64
-tar -cvf http-server-v0.3-macos-darwin.tar.gz osx
-tar -cvf http-server-v0.3-win-x86_64.tar.gz win-x86_64
+tar -cvf http-server-v0.4-linux-amd-x86_64.tar.gz amd-x86_64
+tar -cvf http-server-v0.4-macos-darwin.tar.gz osx
+tar -cvf http-server-v0.4-win-x86_64.tar.gz win-x86_64
