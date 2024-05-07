@@ -122,3 +122,26 @@ Use "http-server [command] --help" for more information about a command.
 
 
 ```
+
+3. 支持多路由
+
+填写路由信息
+
+```yaml
+routers:
+    # 文件路径
+  - file_dir: ./example/a
+    # 请求的路由地址
+    public_path: /c
+    # 是否是压缩文件
+    is_gzip: false
+  - file_dir: ./example/b
+    public_path: /d
+    is_gzip: false
+```
+
+运行:
+
+```bash
+$ static-server --config example.yaml
+```
