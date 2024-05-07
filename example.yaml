@@ -1,0 +1,7 @@
+routers:
+  - file_dir: ./example/a
+    public_path: /c
+    is_gzip: false
+  - file_dir: ./example/b
+    public_path: /d
+    is_gzip: false

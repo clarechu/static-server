@@ -25,6 +25,7 @@ type Root struct {
 	Path       string
 	PublicPath string
 	IsGzip     bool
+	Config     string
 }
 
 type Server struct {
@@ -70,4 +71,6 @@ func addFlag(cmd *cobra.Command, args *Root) {
 	cmd.PersistentFlags().StringVarP(&args.Path, "basicPath", "p", "/", "url root path")
 	cmd.PersistentFlags().StringVarP(&args.FileDir, "file", "f", "./dist", "static file path")
 	cmd.PersistentFlags().StringVar(&args.PublicPath, "publicPath", "/", "The base URL your application bundle will be deployed")
+	cmd.PersistentFlags().StringVar(&args.Config, "config", "", "The static configuration file path")
+
 }

@@ -163,6 +163,18 @@ func (sH *StaticAssetsHandler) RegisterRoutes(router *mux.Router) {
 	}
 }
 
+// StaticRegisterRoutes registers routes for this handler on the given router
+func (sH *StaticAssetsHandler) StaticRegisterRoutes(router *mux.Router) {
+	handler := spaHandler{
+		staticPath: sH.options.FileDir,
+		rootPath:   sH.options.BasePath,
+		indexPath:  "index.html",
+	}
+	router.PathPrefix(sH.options.BasePath).
+		Handler(handler)
+
+}
+
 func (sH *StaticAssetsHandler) notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Write(sH.indexHTML.Load().([]byte))
