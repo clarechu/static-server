@@ -135,6 +135,7 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		path = path + ".html"
 		_, err := os.Stat(path)
 		if os.IsNotExist(err) {
+			path = filepath.Join(h.staticPath, h.indexPath)
 			http.ServeFile(w, r, path)
 			return
 		} else if err == nil {
