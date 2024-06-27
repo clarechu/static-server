@@ -33,6 +33,7 @@ type StaticServerConfig struct {
 
 type StaticRouter struct {
 	FileDir    string `yaml:"file_dir,omitempty" json:"file_dir,omitempty"`
+	ProxyPaas  string `yaml:"proxy_paas,omitempty" json:"proxy_paas,omitempty"`
 	Path       string `yaml:"path,omitempty" json:"path,omitempty"`
 	PublicPath string `json:"public_path,omitempty" yaml:"public_path,omitempty"`
 	IsGzip     bool   `json:"is_gzip,omitempty" yaml:"is_gzip,omitempty"`
@@ -55,16 +56,22 @@ func NewServer(root *Root) *Server {
 	} else {
 		config := getConfig(root.Config)
 		for _, router := range config.Routers {
-			staticAssetsHandler, err := NewStaticAssetsHandler("", StaticAssetsHandlerOptions{
-				FileDir:  router.FileDir,
-				BasePath: router.PublicPath,
-				IsGzip:   router.IsGzip,
-			})
-			if err != nil {
-				log.Warningf("new static assets handler :%v", err)
+			if router.ProxyPaas == "" {
+				staticAssetsHandler, err := NewStaticAssetsHandler("", StaticAssetsHandlerOptions{
+					FileDir:  router.FileDir,
+					BasePath: router.PublicPath,
+					IsGzip:   router.IsGzip,
+				})
+				if err != nil {
+					log.Warningf("new static assets handler :%v", err)
+				} else {
+					staticAssetsHandler.StaticRegisterRoutes(r)
+				}
 			} else {
-				staticAssetsHandler.StaticRegisterRoutes(r)
+				proxyRouter := NewProxyRouter(router.ProxyPaas)
+				r.PathPrefix(router.PublicPath).HandlerFunc(proxyRouter.Proxy)
 			}
+
 		}
 	}
 

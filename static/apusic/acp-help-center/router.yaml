@@ -1,0 +1,27 @@
+routers:
+  # 文件路径
+  - file_dir: ./alarm
+    # 请求的路由地址
+    public_path: /acp/alarm
+    # 是否是压缩文件
+    is_gzip: false
+  - file_dir: ./cloudlog
+    public_path: /acp/log
+    is_gzip: false
+  # 帮助文档
+  - file_dir: ./workorder
+    public_path: /acp/workorder
+    is_gzip: false
+  # 帮助文档
+  - file_dir: ./acp-help-center
+    public_path: /acp/help
+    is_gzip: false
+  # maas 整个管控台
+  - file_dir: ./maas
+    public_path: /
+    is_gzip: false
+  # maas 整个管控台
+  - file_dir: ./aump
+    public_path: /acp/aump
+    is_gzip: false
+
