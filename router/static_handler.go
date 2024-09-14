@@ -76,6 +76,7 @@ type StaticAssetsHandlerOptions struct {
 	FileDir  string
 	BasePath string
 	IsGzip   bool
+	Headers  map[string]string
 }
 
 // NewStaticAssetsHandler returns a StaticAssetsHandler
@@ -169,6 +170,7 @@ func (sH *StaticAssetsHandler) StaticRegisterRoutes(router *mux.Router) {
 		staticPath: sH.options.FileDir,
 		rootPath:   sH.options.BasePath,
 		indexPath:  "index.html",
+		headers:    sH.options.Headers,
 	}
 	router.PathPrefix(sH.options.BasePath).
 		Handler(handler)

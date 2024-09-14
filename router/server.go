@@ -32,11 +32,12 @@ type StaticServerConfig struct {
 }
 
 type StaticRouter struct {
-	FileDir    string `yaml:"file_dir,omitempty" json:"file_dir,omitempty"`
-	ProxyPaas  string `yaml:"proxy_paas,omitempty" json:"proxy_paas,omitempty"`
-	Path       string `yaml:"path,omitempty" json:"path,omitempty"`
-	PublicPath string `json:"public_path,omitempty" yaml:"public_path,omitempty"`
-	IsGzip     bool   `json:"is_gzip,omitempty" yaml:"is_gzip,omitempty"`
+	FileDir    string            `yaml:"file_dir,omitempty" json:"file_dir,omitempty"`
+	Headers    map[string]string `json:"headers,omitempty" yaml:"headers,omitempty"`
+	ProxyPaas  string            `yaml:"proxy_paas,omitempty" json:"proxy_paas,omitempty"`
+	Path       string            `yaml:"path,omitempty" json:"path,omitempty"`
+	PublicPath string            `json:"public_path,omitempty" yaml:"public_path,omitempty"`
+	IsGzip     bool              `json:"is_gzip,omitempty" yaml:"is_gzip,omitempty"`
 }
 
 func NewServer(root *Root) *Server {
@@ -59,6 +60,7 @@ func NewServer(root *Root) *Server {
 			if router.ProxyPaas == "" {
 				staticAssetsHandler, err := NewStaticAssetsHandler("", StaticAssetsHandlerOptions{
 					FileDir:  router.FileDir,
+					Headers:  router.Headers,
 					BasePath: router.PublicPath,
 					IsGzip:   router.IsGzip,
 				})
@@ -122,6 +124,7 @@ type spaHandler struct {
 	rootPath   string
 	staticPath string
 	indexPath  string
+	headers    map[string]string
 }
 
 // ServeHTTP inspects the URL path to locate a file within the static dir
@@ -129,6 +132,9 @@ type spaHandler struct {
 // file located at the index path on the SPA handler will be served. This
 // is suitable behavior for serving an SPA (single page application).
 func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	for key, value := range h.headers {
+		w.Header().Set(key, value)
+	}
 	// get the absolute path to prevent directory traversal
 	path := r.URL.Path
 	path = strings.Replace(path, h.rootPath, "", 1)
