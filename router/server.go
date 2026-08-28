@@ -16,6 +16,7 @@ package router
 
 import (
 	"fmt"
+	"html"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v3"
@@ -162,7 +163,8 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		// if we got an error (that wasn't that the file doesn't exist) stating the
 		// file, return a 500 internal server error and stop
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// Escape HTML characters to prevent XSS attacks via error messages
+		http.Error(w, html.EscapeString(err.Error()), http.StatusInternalServerError)
 		return
 	}
 
