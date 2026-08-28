@@ -1,8 +1,7 @@
 package router
 
 import (
-	"errors"
-	"fmt"
+	"encoding/json"
 	"io"
 	"k8s.io/klog/v2"
 	"net"
@@ -47,25 +46,21 @@ func (ro *ProxyRouter) Proxy(w http.ResponseWriter, r *http.Request) {
 	r.URL.Scheme = ro.URI.Scheme
 	trip, err := ro.defaultTransport.RoundTrip(r)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err.Error())))
+		writeJSONError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	if trip.StatusCode != 200 {
 		data, err := io.ReadAll(trip.Body)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err.Error())))
+			writeJSONError(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		w.WriteHeader(trip.StatusCode)
-		w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, errors.New(string(data)))))
+		writeJSONError(w, trip.StatusCode, string(data))
 		return
 	}
 	data, err := io.ReadAll(trip.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf(`{"message": "%s"}`, err.Error())))
+		writeJSONError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	for k, vs := range trip.Header {
@@ -74,4 +69,13 @@ func (ro *ProxyRouter) Proxy(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	w.Write(data)
+}
+
+func writeJSONError(w http.ResponseWriter, statusCode int, message string) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(statusCode)
+	resp := map[string]string{"message": message}
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		klog.Errorf("failed to encode error response: %v", err)
+	}
 }
